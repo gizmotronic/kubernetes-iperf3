@@ -30,15 +30,13 @@ spec:
           effect: NoSchedule
       containers:
       - name: iperf3-server
-        image: networkstatic/iperf3
+        image: clearlinux/iperf:3
         args: ['-s']
         ports:
         - containerPort: 5201
           name: server
       terminationGracePeriodSeconds: 0
-
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -50,9 +48,7 @@ spec:
   - protocol: TCP
     port: 5201
     targetPort: server
-    
----
-    
+---    
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -74,7 +70,8 @@ spec:
           effect: NoSchedule
       containers:
       - name: iperf3-client
-        image: networkstatic/iperf3
-        command: ['/bin/sh', '-c', 'sleep infinity']
+        image: clearlinux/iperf:3
+        stdin: true
+        tty: true
         # To benchmark manually: kubectl exec iperf3-clients-jlfxq -- /bin/sh -c 'iperf3 -c iperf3-server'
       terminationGracePeriodSeconds: 0
